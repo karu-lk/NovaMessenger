@@ -1,0 +1,26 @@
+<div class="ui-input-form">
+    <h3>Customer Message Editor</h3>
+    <br />
+
+    <form novalidate (ngSubmit)="SubmitMessageForm(newMessage)" [formGroup]="newMessage">
+        <div class="form-group">
+            <label>Message ID:</label>
+            <input class="form-control" type="text" readonly formControlName="messageId">
+        </div>
+        <div class="form-group">
+            <label>Customer Name:</label>
+            <input class="form-control" type="text" formControlName="customerDisplayName">
+        </div>
+        <div class="form-group">
+            <label>Message:</label>
+            <textarea class="form-control" type="text" formControlName="message" cols="40" rows="4" >
+            </textarea>
+        </div>
+        <div class="form-group">
+            <label>Status:</label>
+            <input class="form-control" type="text" formControlName="messageStatus">
+        </div>
+        <button class="btn btn-primary" type="button" (click)="BackToMessageBoard()">Back to Message Board</button>
+        <button class="btn btn-primary" type="submit">Save</button>
+    </form>
+</div>
