@@ -11,16 +11,15 @@ import { MessageService } from '../../services/message.service';
 })
 export class MessageBoardComponent implements OnInit {
   allMessages: AlexaMessage[] = [];
-  //alexaMessages: any;
   constructor(private router: Router, private _messageService: MessageService) { }
 
   ngOnInit() {
-    //this.alexaMessages = this._messageService.getAllMessages();
     this._messageService
       .getAllMessages()
       .subscribe(m => this.allMessages = m
       , err => console.error(err));
   }
+
 
   loadEditor(item) {
     if (item !== null) {

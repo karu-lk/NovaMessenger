@@ -1,9 +1,8 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 
-import { AlexaMessage } from './alexamessage.interface';
+import { AlexaMessage } from '../messageeditor/alexamessage.interface';
 import { MessageService } from '../../services/message.service';
 
 @Component({
@@ -11,69 +10,64 @@ import { MessageService } from '../../services/message.service';
   templateUrl: './messageeditor.component.html',
   styleUrls: ['./messageeditor.component.scss']
 })
-export class MessageEditorComponent implements OnInit, OnDestroy {
-  private messageDirtyStatus: string;
-  @Input() messageId: string;
-  private sub: any;
+export class MessageEditorComponent implements OnInit {
   id: string;
-  selectedMessage: any;
+  newMessageForm: FormGroup;
 
-  newMessage: FormGroup;
-
-  constructor(private route: ActivatedRoute, private router: Router, private _messageService: MessageService) { }
+  allMessages: AlexaMessage;
+  constructor(private router: Router, private route: ActivatedRoute, private _messageService: MessageService, private _formBuilder: FormBuilder) { }
 
   ngOnInit() {
-    this.InitiateForm();
-  }
-
-  SubmitMessageForm({ value, valid }: { value: AlexaMessage, valid: boolean }) {
-    console.log(value, valid);
-    if (this.id === 'new') {
-      //add new record
-    }
-    else {
-      //update the selected
-    }
-  }
-
-  ngOnDestroy() {
-    this.sub.unsubscribe();
-  }
-
-  InitiateForm() {
-    this.sub = this.route.params.subscribe(params => {
+    this.route.params.subscribe(params => {
       this.id = params['messageId'];
     });
 
-    if (this.id !== 'new') {
-      //this.selectedMessage = this._messageService.getMessageById(+this.id);
+    this.newMessageForm = this._formBuilder.group({
+      messageId: '',
+      customerId: '',
+      customerDisplayName: '',
+      message: '',
+      messageStatus: ''
+    });
 
+    if (this.id !== "new") {
       this._messageService
         .getMessageById(+this.id)
-        .subscribe(m => this.newMessage = m
-        , err => console.error(err));
-
-      //console.log('message editor new message: ' + this.newMessage);
-
-      this.newMessage = new FormGroup({
-        messageId: new FormControl(this.selectedMessage.messageId),
-        customerDisplayName: new FormControl(this.selectedMessage.customerDisplayName),
-        message: new FormControl(this.selectedMessage.message),
-        messageStatus: new FormControl(this.selectedMessage.messageStatus)
-      });
-    }
-    else {
-      this.messageDirtyStatus = 'new-record';
-      this.newMessage = new FormGroup({
-        messageId: new FormControl(''),
-        customerDisplayName: new FormControl(''),
-        message: new FormControl(''),
-        messageStatus: new FormControl('')
-      });
+        .subscribe(
+        m => {
+          this.allMessages = m;
+          this.loadFormData(this.allMessages);
+        });
     }
   }
 
   BackToMessageBoard() {
     this.router.navigate(['views/messageboard']);
+  }
+
+  private loadFormData(_selectedMessage: AlexaMessage) {
+    this.newMessageForm = this._formBuilder.group({
+      messageId: _selectedMessage.messageId,
+      customerDisplayName: _selectedMessage.customerDisplayName,
+      message: _selectedMessage.message,
+      messageStatus: _selectedMessage.messageStatus
+    });
+  }
+
+  private SubmitMessageForm(_newMessageForm: AlexaMessage) {
+    let newMessage = ({
+      message_id: +_newMessageForm.messageId,
+      customer_display_name: _newMessageForm.customerDisplayName,
+      message: _newMessageForm.message,
+      message_status: _newMessageForm.messageStatus,
+    });
+
+    this._messageService
+      .addMessage(newMessage)
+      .subscribe(
+      m => {
+        console.info('Add new completed!');
+        this.router.navigate(['views/messageboard']);
+      });
   }
 }

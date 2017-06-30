@@ -1,6 +1,6 @@
 export interface AlexaMessage {
     messageId: number;
-    customerId: number;
+    //customerId: number;
     customerDisplayName: string;
     message: string;
     messageStatus: string;

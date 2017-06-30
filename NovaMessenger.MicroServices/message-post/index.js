@@ -5,14 +5,13 @@ var docClient = new AWS.DynamoDB.DocumentClient({ region: 'eu-west-1' });
 
 exports.handler = function (event, context, callback) {
     console.log(event);
-    
+
     var params = {
         Item: {
-            "customer_display_name": event.customer_name,
-            "customer_id": event.customer_id,
-            "message": event.message,
             "message_id": event.message_id,
-            "message_status": "Pending"
+            "customer_display_name": event.customer_display_name,
+            "message": event.message,
+            "message_status": event.message_status
         },
         TableName: 'nova_alexa_messages'
     };
