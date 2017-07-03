@@ -13,11 +13,14 @@ import { MessageService } from '../../services/message.service';
 export class MessageEditorComponent implements OnInit {
   id: string;
   newMessageForm: FormGroup;
+  dynamicContentLoaded: boolean;
 
   allMessages: AlexaMessage;
   constructor(private router: Router, private route: ActivatedRoute, private _messageService: MessageService, private _formBuilder: FormBuilder) { }
 
   ngOnInit() {
+    this.dynamicContentLoaded = true;
+
     this.route.params.subscribe(params => {
       this.id = params['messageId'];
     });
@@ -31,13 +34,19 @@ export class MessageEditorComponent implements OnInit {
     });
 
     if (this.id !== "new") {
+      this.dynamicContentLoaded = false;
       this._messageService
         .getMessageById(+this.id)
         .subscribe(
         m => {
           this.allMessages = m;
           this.loadFormData(this.allMessages);
-        });
+        }
+        , err => console.log(err)
+        , () => {
+          this.dynamicContentLoaded = true;
+        }
+        );
     }
   }
 
