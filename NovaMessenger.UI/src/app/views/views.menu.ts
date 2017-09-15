@@ -15,6 +15,18 @@ export const PAGES_MENU = [
         }
       },
       {
+        path: 'login',
+        data: {
+          menu: {
+            title: 'Login',
+            icon: 'ion-android-home',
+            selected: false,
+            expanded: false,
+            order: 1
+          }
+        }
+      },
+      {
         path: 'messageboard',
         data: {
           menu: {

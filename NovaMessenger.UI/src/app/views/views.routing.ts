@@ -16,6 +16,7 @@ export const routes: Routes = [
     component: Views,
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'login', loadChildren: './login/login.module#LoginModule' },
       { path: 'home', loadChildren: './home/home.module#HomeModule' },
       { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule' },
       { path: 'charts', loadChildren: './charts/charts.module#ChartsModule' },
